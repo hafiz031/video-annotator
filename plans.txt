@@ -1,0 +1,8 @@
+Requirements:
+- draggable bounding box
+- square-shape bounding box
+- auto interpolate bounding box to the next frame
+- ability to adjust it later
+
+Limitations
+- 
