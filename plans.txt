@@ -10,3 +10,5 @@ Limitations
 Useful links:
 - https://matplotlib.org/3.1.1/users/event_handling.html#draggable-rectangle-exercise
 - https://matplotlib.org/stable/users/explain/event_handling.html
+- https://stackoverflow.com/a/44281340/6907424
+- https://stackoverflow.com/q/47529558/6907424
