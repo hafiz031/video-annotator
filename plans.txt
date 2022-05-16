@@ -6,3 +6,7 @@ Requirements:
 
 Limitations
 - 
+
+Useful links:
+- https://matplotlib.org/3.1.1/users/event_handling.html#draggable-rectangle-exercise
+- https://matplotlib.org/stable/users/explain/event_handling.html
