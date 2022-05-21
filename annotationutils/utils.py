@@ -110,8 +110,7 @@
 
 
 
-
-
+import math
 import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
@@ -123,26 +122,91 @@ x = np.array(Image.open('annotationutils/black.jpg'), dtype=np.uint8)
 fig, ax = plt.subplots(1)
 ax.imshow(x)
 
-
-def line_select_callback(eclick, erelease):
-    x1, y1 = eclick.xdata, eclick.ydata
-    x2, y2 = erelease.xdata, erelease.ydata
-    print(eclick.x)
-    print(eclick.y)
-    print(dir(eclick))
-    print(eclick.lastevent) # we can see the xy and find if from which direction the dragging happened
-    print(x1, y1) # (left, bottom)
-    print(x2, y2) # (right, top)
-    print("#")
-    rect = plt.Rectangle( (min(x1,x2),min(y1,y2)), np.abs(x1-x2), np.abs(y1-y2) )
-    ax.add_patch(rect)
+class RegionOfInterestDrawingUtils:
+    def __inti__(self):
+        pass
 
 
+    def find_dragging_alignment(self, left_top, right_bottom, mouse_release_point):
+        """There are 4 cases there:
+        1. Dragged from left-top
+        2. Dragged from right-bottom
+        3. Dragged from right-top
+        4. Dragged from left-bottom
+        """
 
-rs = RectangleSelector(ax, line_select_callback,
-                       drawtype='box', useblit=False, button=[1], 
+        # To get rid of the floating point precision error in further calculation
+        left_top = [int(v) for v in left_top]
+        right_bottom = [int(v) for v in right_bottom]
+        mouse_release_point = [int(v) for v in mouse_release_point]
+        
+        x1, y1 = left_top
+        x2, y2 = right_bottom
+        x, y = mouse_release_point
+
+        print(f"left_top: {left_top}")
+        print(f"right_bottom: {right_bottom}")
+        print(f"mouse_release_point: {mouse_release_point}")
+
+        expression = (x - x1) * (y1 - y2) - (y - y1) * (x1 - x2)
+
+        if math.isclose(expression, 0):
+            if left_top == mouse_release_point:
+                return "towards_left_top"
+            elif right_bottom == mouse_release_point:
+                return "towards_right_bottom"
+        elif expression > 0:
+            return "towards_left_bottom"
+        elif expression < 0:
+            return "towards_right_top"
+
+
+    def rectangle_drawing_callback(self, eclick, erelease, make_square = False):
+        """All measurements are being taken considering (left, top) = (0, 0)"""
+        left_top = eclick.xdata, eclick.ydata
+        right_bottom = erelease.xdata, erelease.ydata
+        mouse_release_point = eclick.lastevent.xdata, eclick.lastevent.ydata 
+
+
+        x1, y1 = left_top
+        x2, y2 = right_bottom
+
+        if make_square:
+            """There are 4 possibilities (not considering the cases when user drags along
+            a straight-line, as this won't create a rectangle/square). Among them we need not
+            handle the case when mouse is dragged from left-top. But the other 3 cases need to
+            be handled by introducing offset in order to give a natural feeling while drawing.
+            Otherwise the resulting square won't be set at the proper position."""
+
+            min_dist = min(np.abs(x1-x2), np.abs(y1-y2))
+            
+            dragging_alignment = self.find_dragging_alignment(left_top, right_bottom, mouse_release_point)
+
+            if dragging_alignment == "towards_left_bottom":
+                if abs(y2 - y1) < abs(x2 - x1):
+                    x1 = x2 - min_dist
+            elif dragging_alignment == "towards_left_top":
+                if abs(y2 - y1) < abs(x2 - x1):
+                    x1 = x2 - min_dist
+                else:
+                    y1 = y2 - min_dist
+            elif dragging_alignment == "towards_right_top":
+                if abs(y2 - y1) > abs(x2 - x1):
+                    y1 = y2 - min_dist
+
+            rect = plt.Rectangle((min(x1,x2),min(y1,y2)), min_dist, min_dist)
+        else:
+            rect = plt.Rectangle((min(x1,x2),min(y1,y2)), np.abs(x1-x2), np.abs(y1-y2))
+
+        ax.add_patch(rect)
+
+
+roi_draw = RegionOfInterestDrawingUtils()
+rs = RectangleSelector(ax, lambda eclick, erelease: roi_draw.rectangle_drawing_callback(eclick, erelease, make_square = True),
+                       drawtype='box', useblit=False, button=[1], # usebilt True means the shape will not be shown
                        minspanx=5, minspany=5, spancoords='pixels', 
                        interactive=True)
+
 
 plt.axis('equal')
 plt.show()
