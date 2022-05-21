@@ -176,6 +176,7 @@ class RegionOfInterestDrawingUtils:
             a straight-line, as this won't create a rectangle/square). Among them we need not
             handle the case when mouse is dragged from left-top. But the other 3 cases need to
             be handled by introducing offset in order to give a natural feeling while drawing.
+            Among those 3 cases, there are only 4 sub-cases in total where we need to do this.
             Otherwise the resulting square won't be set at the proper position."""
 
             min_dist = min(np.abs(x1-x2), np.abs(y1-y2))
