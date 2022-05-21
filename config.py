@@ -1,0 +1,1 @@
+ROI_TYPE = "square"

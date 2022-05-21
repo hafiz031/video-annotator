@@ -115,12 +115,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 from matplotlib.widgets  import RectangleSelector
+import config
 
 
-x = np.array(Image.open('annotationutils/black.jpg'), dtype=np.uint8)
-# plt.imshow(x)
-fig, ax = plt.subplots(1)
-ax.imshow(x)
+# x = np.array(Image.open('annotationutils/black.jpg'), dtype=np.uint8)
+# # plt.imshow(x)
+# fig, ax = plt.subplots(1)
+# ax.imshow(x)
 
 class RegionOfInterestDrawingUtils:
     def __inti__(self):
@@ -202,11 +203,19 @@ class RegionOfInterestDrawingUtils:
         ax.add_patch(rect)
 
 
-roi_draw = RegionOfInterestDrawingUtils()
-rs = RectangleSelector(ax, lambda eclick, erelease: roi_draw.rectangle_drawing_callback(eclick, erelease, make_square = True),
-                       drawtype='box', useblit=False, button=[1], # usebilt True means the shape will not be shown
-                       minspanx=5, minspany=5, spancoords='pixels', 
-                       interactive=True)
+        def draw_roi(self):
+            roi_draw = RegionOfInterestDrawingUtils()
+
+            if config.ROI_TYPE == "square":
+                rs = RectangleSelector(ax, lambda eclick, erelease: roi_draw.rectangle_drawing_callback(eclick, erelease, make_square = True),
+                                    drawtype='box', useblit=False, button=[1], # usebilt True means the shape will not be shown
+                                    minspanx=5, minspany=5, spancoords='pixels', 
+                                    interactive=False)
+            elif config.ROI_TYPE == "rectangle":
+                rs = RectangleSelector(ax, lambda eclick, erelease: roi_draw.rectangle_drawing_callback(eclick, erelease, make_square = False),
+                                    drawtype='box', useblit=False, button=[1], # usebilt True means the shape will not be shown
+                                    minspanx=5, minspany=5, spancoords='pixels', 
+                                    interactive=False)
 
 
 plt.axis('equal')

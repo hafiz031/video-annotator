@@ -1,5 +1,5 @@
 Requirements:
-- draggable bounding box
+- bounding box with dragging facility
 - square-shape bounding box
 - auto interpolate bounding box to the next frame
 - ability to adjust it later
@@ -12,3 +12,7 @@ Useful links:
 - https://matplotlib.org/stable/users/explain/event_handling.html
 - https://stackoverflow.com/a/44281340/6907424
 - https://stackoverflow.com/q/47529558/6907424
+- https://stackoverflow.com/questions/33176157/how-to-continue-plotting-in-the-same-window-in-python
+- https://stackoverflow.com/questions/17888593/display-sequence-of-images-using-matplotlib
+- https://stackoverflow.com/a/49310602/6907424
+- https://stackoverflow.com/questions/28269157/plotting-in-a-non-blocking-way-with-matplotlib
