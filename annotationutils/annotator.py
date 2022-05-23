@@ -8,14 +8,10 @@ class Annotator:
         self.output_dir = output_dir
 
     
-    def on_press(self, event):
+    def get_next_frame(self, event):
         print('press', event.key)
         # sys.stdout.flush()
-        if event.key == 'x':
-            # visible = xl.get_visible()
-            # xl.set_visible(not visible)
-            # fig.canvas.draw()
-            print("FFF")
+        
 
 
     def annotate(self):
@@ -27,13 +23,32 @@ class Annotator:
 
         # fig, ax = plt.subplots()
         # print(fig.figure)
+        frames = []
         while True:
             print("BBB")
             ret, img = cap.read()
             if not ret:
                 break
-
             img = cv.cvtColor(img, cv.COLOR_RGB2BGR)
+            frames.append(img)
+
+        
+        def on_press(event):
+            print('press', event.key)
+            if event.key == 'x':
+                # visible = xl.get_visible()
+                # xl.set_visible(not visible)
+                # fig.canvas.draw()
+                print("FFF")    
+
+        
+        while True:
+            print("BBB")
+            # ret, img = cap.read()
+            # if not ret:
+            #     break
+
+            # img = cv.cvtColor(img, cv.COLOR_RGB2BGR)
             # #####################################   
             # print(img)
             # # plt.imshow(x)
@@ -79,7 +94,8 @@ class Annotator:
 
             fig, ax = plt.subplots()
 
-            fig.canvas.mpl_connect('key_press_event', self.on_press)
+            fig.canvas.mpl_connect('key_press_event', on_press)
+
             plt.imshow(img)
             # ax.plot()
             # xl = ax.set_xlabel('easy come, easy go')
